@@ -24,6 +24,7 @@ impl Input {
     pub fn update(&mut self) {
         self.keyboard_state.update();
         self.mouse_state.mouse_delta = [0.0, 0.0];
+        self.mouse_state.scroll_delta = 0.0;
     }
     pub fn update_cursor_moved(&mut self, pos: &PhysicalPosition<f64>) {
         self.mouse_state.mouse_delta = [
