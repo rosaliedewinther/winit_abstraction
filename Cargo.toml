@@ -1,5 +1,5 @@
 [package]
-name = "winit_window_control"
+name = "winit_abstraction"
 version = "0.1.0"
 authors = ["jasperdewinther <31817802+jasperdewinther@users.noreply.github.com>"]
 edition = "2021"
@@ -7,4 +7,4 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-winit = "0.25"
+winit = "0.26"

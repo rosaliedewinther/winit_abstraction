@@ -1,23 +1,18 @@
 use crate::input::input::Input;
 use std::time::Instant;
-use winit::dpi::Size::Physical;
-use winit::dpi::{PhysicalSize, Size};
+use winit::dpi::PhysicalSize;
 use winit::event::{Event, WindowEvent};
 use winit::event_loop::{ControlFlow, EventLoop};
-use winit::monitor::MonitorHandle;
-use winit::window::{Fullscreen, Window, WindowBuilder};
+use winit::window::{Window, WindowBuilder};
 
-#[derive(PartialEq)]
 pub enum RenderResult {
     Continue,
     Exit,
 }
-#[derive(PartialEq)]
 pub enum UpdateResult {
     Continue,
     Exit,
 }
-#[derive(PartialEq)]
 pub enum InitResult {
     Continue,
     Exit,
@@ -30,22 +25,14 @@ pub trait Game {
     fn on_resize(&mut self, physical_size: PhysicalSize<u32>);
 }
 
-pub fn main_loop_run<T>(mut game: T, window_width: Option<i32>, window_height: Option<i32>)
+pub fn main_loop_run<T>(mut game: T, window_width: u32, window_height: u32, ticks_per_s: f32)
 where
     T: 'static + Game,
 {
     let event_loop = EventLoop::new();
-    let mut window_builder = WindowBuilder::new();
-    if window_width.is_some() && window_height.is_some() {
-        window_builder = WindowBuilder::new()
-            .with_inner_size(PhysicalSize::new(
-                window_width.unwrap(),
-                window_height.unwrap(),
-            ))
-            .with_resizable(false);
-    } else {
-        window_builder = WindowBuilder::new().with_maximized(true);
-    }
+    let window_builder = WindowBuilder::new()
+        .with_inner_size(PhysicalSize::new(window_width, window_height))
+        .with_resizable(false);
     let window = window_builder.build(&event_loop).unwrap();
     game.on_init(&window);
     let mut window_input = Input::new();
@@ -99,7 +86,7 @@ where
             window.request_redraw();
         }
         _ => {
-            if on_tick_timer.elapsed().as_secs_f32() * 20f32 > 1f32 {
+            if on_tick_timer.elapsed().as_secs_f32() * ticks_per_s > 1f32 {
                 game.on_tick(on_tick_timer.elapsed().as_secs_f64());
                 on_tick_timer = Instant::now();
             }
