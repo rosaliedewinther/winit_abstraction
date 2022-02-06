@@ -13,19 +13,15 @@ pub enum UpdateResult {
     Continue,
     Exit,
 }
-pub enum InitResult {
-    Continue,
-    Exit,
-}
 
 pub trait Game {
+    fn on_init(window: &Window) -> Self;
     fn on_tick(&mut self, dt: f64) -> UpdateResult;
     fn on_render(&mut self, input: &mut Input, dt: f64, window: &Window) -> RenderResult;
-    fn on_init(&mut self, window: &Window) -> InitResult;
     fn on_resize(&mut self, physical_size: PhysicalSize<u32>);
 }
 
-pub fn main_loop_run<T>(mut game: T, window_width: u32, window_height: u32, ticks_per_s: f32)
+pub fn main_loop_run<T>(window_width: u32, window_height: u32, ticks_per_s: f32)
 where
     T: 'static + Game,
 {
@@ -34,7 +30,7 @@ where
         .with_inner_size(PhysicalSize::new(window_width, window_height))
         .with_resizable(false);
     let window = window_builder.build(&event_loop).unwrap();
-    game.on_init(&window);
+    let mut game = T::on_init(&window);
     let mut window_input = Input::new();
     let mut on_tick_timer = Instant::now();
     let mut on_render_timer = Instant::now();
