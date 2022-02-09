@@ -1,6 +1,6 @@
 use crate::input::input::Input;
 use std::time::Instant;
-use winit::dpi::PhysicalSize;
+use winit::dpi::{PhysicalPosition, PhysicalSize};
 use winit::event::{Event, WindowEvent};
 use winit::event_loop::{ControlFlow, EventLoop};
 use winit::window::{Window, WindowBuilder};
@@ -16,8 +16,8 @@ pub enum UpdateResult {
 
 pub trait Game {
     fn on_init(window: &Window) -> Self;
-    fn on_tick(&mut self, dt: f64) -> UpdateResult;
-    fn on_render(&mut self, input: &mut Input, dt: f64, window: &Window) -> RenderResult;
+    fn on_tick(&mut self, dt: f32) -> UpdateResult;
+    fn on_render(&mut self, input: &mut Input, dt: f32, window: &Window) -> RenderResult;
     fn on_resize(&mut self, physical_size: PhysicalSize<u32>);
 }
 
@@ -41,7 +41,10 @@ where
             window_id,
         } if window_id == window.id() => match event {
             WindowEvent::CursorMoved { position, .. } => {
-                window_input.update_cursor_moved(position);
+                window_input.update_cursor_moved(&PhysicalPosition::<f32> {
+                    x: position.x as f32,
+                    y: position.y as f32,
+                });
             }
             WindowEvent::CursorEntered { .. } => {
                 window_input.update_cursor_entered();
@@ -69,12 +72,13 @@ where
             _ => {}
         },
         Event::RedrawRequested(_) => {
-            let dt = on_render_timer.elapsed().as_secs_f64();
+            let dt = on_render_timer.elapsed().as_secs_f32();
             on_render_timer = Instant::now();
             match game.on_render(&mut window_input, dt, &window) {
                 RenderResult::Continue => {}
                 RenderResult::Exit => *control_flow = ControlFlow::Exit,
             };
+            window_input.update();
         }
         Event::MainEventsCleared => {
             // RedrawRequested will only trigger once, unless we manually
@@ -83,7 +87,10 @@ where
         }
         _ => {
             if on_tick_timer.elapsed().as_secs_f32() * ticks_per_s > 1f32 {
-                game.on_tick(on_tick_timer.elapsed().as_secs_f64());
+                match game.on_tick(on_tick_timer.elapsed().as_secs_f32()) {
+                    UpdateResult::Continue => {}
+                    UpdateResult::Exit => *control_flow = ControlFlow::Exit,
+                }
                 on_tick_timer = Instant::now();
             }
         }

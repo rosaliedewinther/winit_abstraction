@@ -3,8 +3,8 @@ use crate::input::button::ButtonState;
 pub struct MouseState {
     pub mouse_location: [f32; 2],
     pub mouse_delta: [f32; 2],
-    pub scroll_location: f64,
-    pub scroll_delta: f64,
+    pub scroll_location: f32,
+    pub scroll_delta: f32,
     left: ButtonState,
     right: ButtonState,
 }
