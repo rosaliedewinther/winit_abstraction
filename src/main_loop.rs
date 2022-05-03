@@ -28,7 +28,8 @@ where
     let event_loop = EventLoop::new();
     let window_builder = WindowBuilder::new()
         .with_inner_size(PhysicalSize::new(window_width, window_height))
-        .with_resizable(false);
+        .with_resizable(false)
+        .with_fullscreen(Some(winit::window::Fullscreen::Borderless(None)));
     let window = window_builder.build(&event_loop).unwrap();
     let mut game = T::on_init(&window);
     let mut window_input = Input::new();
