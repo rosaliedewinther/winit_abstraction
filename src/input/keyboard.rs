@@ -33,4 +33,7 @@ impl KeyboardState {
         self.going_down.iter().find(|k| **k == key).is_some()
             || self.down.iter().find(|k| **k == key).is_some()
     }
+    pub fn any_down(&self) -> bool {
+        self.down.len() > 0 || self.going_down.len() > 0
+    }
 }
