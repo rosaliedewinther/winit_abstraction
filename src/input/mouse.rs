@@ -1,5 +1,6 @@
 use crate::input::button::ButtonState;
 
+#[derive(Default)]
 pub struct MouseState {
     pub mouse_location: [f32; 2],
     pub mouse_delta: [f32; 2],
@@ -46,9 +47,9 @@ impl MouseState {
         self.right = ButtonState::Released
     }
     pub fn get_left_button(&self) -> ButtonState {
-        return self.left;
+        self.left
     }
     pub fn get_right_button(&self) -> ButtonState {
-        return self.right;
+        self.right
     }
 }

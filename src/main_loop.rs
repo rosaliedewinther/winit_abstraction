@@ -1,9 +1,10 @@
-use crate::input::input::Input;
 use std::time::Instant;
 use winit::dpi::{PhysicalPosition, PhysicalSize};
 use winit::event::{Event, WindowEvent};
 use winit::event_loop::{ControlFlow, EventLoop};
 use winit::window::{Window, WindowBuilder};
+
+use crate::input::Input;
 
 pub enum RenderResult {
     Continue,
@@ -37,10 +38,7 @@ where
     let mut on_render_timer = Instant::now();
 
     event_loop.run(move |event, _, control_flow| match event {
-        Event::WindowEvent {
-            ref event,
-            window_id,
-        } if window_id == window.id() => match event {
+        Event::WindowEvent { ref event, window_id } if window_id == window.id() => match event {
             WindowEvent::CursorMoved { position, .. } => {
                 window_input.update_cursor_moved(&PhysicalPosition::<f32> {
                     x: position.x as f32,

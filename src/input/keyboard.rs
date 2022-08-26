@@ -1,6 +1,7 @@
 use std::collections::HashSet;
 use winit::event::VirtualKeyCode;
 
+#[derive(Default)]
 pub struct KeyboardState {
     going_down: HashSet<VirtualKeyCode>,
     down: HashSet<VirtualKeyCode>,
@@ -27,13 +28,12 @@ impl KeyboardState {
         self.going_down.remove(&key);
     }
     pub fn just_pressed(&self, key: VirtualKeyCode) -> bool {
-        self.going_down.iter().find(|k| **k == key).is_some()
+        self.going_down.iter().any(|k| *k == key)
     }
     pub fn down(&self, key: VirtualKeyCode) -> bool {
-        self.going_down.iter().find(|k| **k == key).is_some()
-            || self.down.iter().find(|k| **k == key).is_some()
+        self.going_down.iter().any(|k| *k == key) || self.down.iter().any(|k| *k == key)
     }
     pub fn any_down(&self) -> bool {
-        self.down.len() > 0 || self.going_down.len() > 0
+        !self.down.is_empty() || !self.going_down.is_empty()
     }
 }
